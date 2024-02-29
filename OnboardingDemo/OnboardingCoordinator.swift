@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// MARK: - OnboardingModel
+
 protocol OnboardingModelProtocol {
     var coordinator: OnboardingCoordinator? { get set }
     var view: AnyView { get }
@@ -14,11 +16,13 @@ protocol OnboardingModelProtocol {
     var done: Bool { get set }
 }
 
+// MARK: - OnboardingCoordinator
+
 @Observable
-final class OnboardingCoordinator: ObservableObject {
+final class OnboardingCoordinator {
     var viewModels = [any OnboardingModelProtocol]()
-    var modal: ModalView {
-        ModalView(coordinator: self)
+    var modal: OnboardingContainerView {
+        OnboardingContainerView(coordinator: self)
     }
     var presenting: Binding<Bool> {
         Binding<Bool> {
@@ -62,8 +66,7 @@ private extension OnboardingCoordinator {
     }
 }
 
-extension OnboardingCoordinator: ModalViewCoordinatorProtocol {
-    
+extension OnboardingCoordinator {
     func getFirstModel() -> (any OnboardingModelProtocol)? {
         if var firstModel = self.viewModels.first(where: { $0.needToBePresented && !$0.done }) {
             firstModel.coordinator = self
@@ -72,7 +75,7 @@ extension OnboardingCoordinator: ModalViewCoordinatorProtocol {
         return nil
     }
     
-    func getFirstView() -> AnyView? {
+    func onboardingStepView() -> AnyView? {
         if let firstModel = getFirstModel() {
             return firstModel.view
         }

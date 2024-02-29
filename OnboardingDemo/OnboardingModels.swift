@@ -9,24 +9,32 @@ import SwiftUI
 
 // MARK: Dummy Onboarding Model Nr. 1
 
-class OnboardingModel_1: OnboardingModelProtocol, ObservableObject {
+@Observable
+class OnboardingModel_1: OnboardingModelProtocol {
     var coordinator: OnboardingCoordinator?
+
     var view: AnyView {
-        return AnyView(OnboardingView_1(coordinator: self.coordinator).environmentObject(self))
+        AnyView(OnboardingView_1(model: self))
     }
+
     var needToBePresented: Bool {
-        return true
+        true
     }
+
     var done: Bool = false
+
+    func nextButtonTapped() {
+        coordinator?.next()
+    }
+
+    func forceExitButtonTapped() {
+        coordinator?.forceExit()
+    }
 }
 
 struct OnboardingView_1: View {
-    
-    var coordinator: OnboardingCoordinator?
-    
-    @EnvironmentObject
-    private var model: OnboardingModel_1
-    
+    let model: OnboardingModel_1
+
     var body: some View {
         VStack {
             Text("This the Onboarding View Nr. 1\n\n\n")
@@ -34,14 +42,14 @@ struct OnboardingView_1: View {
             
             Button(action: {
                 print("done action")
-                self.coordinator?.next()
+                self.model.nextButtonTapped()
             }, label: {
                 Text("Go to Next")
             })
             Text("\n\n")
             Button(action: {
                 print("done action")
-                self.coordinator?.forceExit()
+                self.model.forceExitButtonTapped()
             }, label: {
                 Text("Forced Exit")
             })
