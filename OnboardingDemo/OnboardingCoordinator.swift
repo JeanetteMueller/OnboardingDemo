@@ -11,7 +11,6 @@ import SwiftUI
 
 protocol OnboardingModelProtocol: Identifiable {
     var id: UUID { get }
-
     var coordinator: OnboardingCoordinator? { get set }
     var view: AnyView { get }
     var needToBePresented: Bool { get }
@@ -27,6 +26,10 @@ final class OnboardingCoordinator: ObservableObject {
 }
 
 extension OnboardingCoordinator {
+    
+    public enum PresentationStyle {
+        case fullscreenCover, sheet
+    }
     
     @ViewBuilder
     func onboardingStepView() -> some View {
@@ -49,6 +52,7 @@ extension OnboardingCoordinator {
             currentModelIndex = currentModelIndex - 1
         }
     }
+    
     func next() {
         if currentModelIndex < itemsToShow - 1 {
             currentModelIndex += 1
