@@ -27,8 +27,8 @@ final class OnboardingCoordinator {
         OnboardingContainerView(coordinator: self)
     }
 
-    var presenting: Binding<Bool> {
-        .constant(shouldBePresented)
+    var isPresented: Bool {
+        shouldBePresented
     }
 
     var nextButtonTitle: String {

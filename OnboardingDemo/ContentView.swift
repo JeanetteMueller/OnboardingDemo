@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-    
     let onboardingCoordinator = OnboardingCoordinator()
     
     var body: some View {
@@ -30,16 +29,57 @@ struct ContentView: View {
             Spacer()
         }
         .padding()
-//        .sheet(isPresented: onboardingCoordinator.presenting) {
-//            onboardingCoordinator.modal
-//        }
-        .fullScreenCover(isPresented: onboardingCoordinator.presenting) {
-            onboardingCoordinator.modal
-        }
+        .presentOnboarding(
+            as: .fullscreenCover,
+            isPresented: onboardingCoordinator.isPresented,
+            view: onboardingCoordinator.modal
+        )
         .onAppear {
             setupOnboarding()
             onboardingCoordinator.start()
         }
+    }
+}
+
+enum PresentationStyle {
+    case fullscreenCover, sheet
+}
+
+struct OnboardingPresentation<Inner: View>: ViewModifier {
+    let presentationStyle: PresentationStyle
+    let isPresenting: Bool
+    let viewBuilder: () -> Inner
+
+    func body(content: Content) -> some View {
+        if presentationStyle == .fullscreenCover {
+            content
+                .fullScreenCover(isPresented: .constant(isPresenting), content: {
+                    viewBuilder()
+                })
+        } else {
+            content
+                .sheet(isPresented: .constant(isPresenting), content: {
+                    viewBuilder()
+                })
+        }
+    }
+}
+
+extension View {
+    func presentOnboarding<Content: View>(
+        as style: PresentationStyle,
+        isPresented: Bool,
+        view: Content
+    ) -> some View {
+        modifier(
+            OnboardingPresentation(
+                presentationStyle: style,
+                isPresenting: isPresented,
+                viewBuilder: {
+                    view
+                }
+            )
+        )
     }
 }
 
