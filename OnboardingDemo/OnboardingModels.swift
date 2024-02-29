@@ -22,8 +22,6 @@ class OnboardingModel_1: OnboardingModelProtocol {
         true
     }
 
-    var done: Bool = false
-
     func nextButtonTapped() {
         coordinator?.next()
     }
@@ -42,14 +40,12 @@ struct OnboardingView_1: View {
             Text("Here you have your text or other stuff to be shown when the application started the first time or when something new should be mentioned")
             
             Button(action: {
-                print("done action")
                 self.model.nextButtonTapped()
             }, label: {
                 Text("Go to Next")
             })
             Text("\n\n")
             Button(action: {
-                print("done action")
                 self.model.forceExitButtonTapped()
             }, label: {
                 Text("Forced Exit")
@@ -82,7 +78,6 @@ struct OnboardingModel_2: OnboardingModelProtocol {
     var needToBePresented: Bool {
         return true
     }
-    var done: Bool = false
 }
 
 struct OnboardingView_2: View {
@@ -107,7 +102,6 @@ struct OnboardingModel_3: OnboardingModelProtocol {
     var needToBePresented: Bool {
         return false
     }
-    var done: Bool = false
 }
 
 struct OnboardingView_3: View {
@@ -132,7 +126,6 @@ struct OnboardingModel_4: OnboardingModelProtocol {
     var needToBePresented: Bool {
         return true
     }
-    var done: Bool = false
 }
 
 struct OnboardingView_4: View {

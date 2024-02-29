@@ -19,13 +19,29 @@ struct OnboardingContainerView: View {
             }
             .background(.orange)
 
-            Button(action: coordinator.next) {
-                Text(coordinator.nextButtonTitle)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(.red)
+            HStack (spacing: 0) {
+                Button(action: coordinator.previous) {
+                    Text(coordinator.previousButtonTitle)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.red)
+                }
+                .opacity(coordinator.previousButtonIsEnabled ? 1.0 : 0.0)
+                
+                Text(coordinator.pageInfo)
+                
+                Button(action: coordinator.next) {
+                    Text(coordinator.nextButtonTitle)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(.red)
+                }
+                .opacity(coordinator.nextButtonIsEnabled ? 1.0 : 0.0)
+                
             }
+            .background(.cyan)
         }
         .background(.blue)
     }
