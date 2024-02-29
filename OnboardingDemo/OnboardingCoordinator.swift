@@ -28,11 +28,7 @@ final class OnboardingCoordinator {
     }
 
     var presenting: Binding<Bool> {
-        Binding<Bool> {
-            return self.shouldBePresented
-        } set: { newValue in
-            print("binding set to \(newValue)")
-        }
+        .constant(shouldBePresented)
     }
 
     var nextButtonTitle: String {

@@ -37,7 +37,6 @@ struct ContentView: View {
             onboardingCoordinator.modal
         }
         .onAppear {
-            
             setupOnboarding()
             onboardingCoordinator.start()
         }
