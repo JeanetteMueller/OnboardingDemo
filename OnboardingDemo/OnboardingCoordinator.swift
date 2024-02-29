@@ -20,57 +20,19 @@ protocol OnboardingModelProtocol: Identifiable {
 
 // MARK: - OnboardingCoordinator
 
-@Observable
-final class OnboardingCoordinator {
-    var viewModels = [any OnboardingModelProtocol]()
-    var modal: OnboardingContainerView {
-        OnboardingContainerView(coordinator: self)
-    }
-
-    var isPresented: Bool {
-        shouldBePresented
-    }
-
-    var nextButtonTitle: String {
-        if itemsToShow > 1 {
-            "Next Page \(itemsToBePresented - (itemsToShow - 1))/\(itemsToBePresented)"
-        } else {
-            "Exit"
-        }
-    }
-
-    private var shouldBePresented: Bool = false
+final class OnboardingCoordinator: ObservableObject {
+    @Published var viewModels = [any OnboardingModelProtocol]()
+    @Published var modal: OnboardingContainerView?
+    @Published var isPresented = false
     
     func setup(_ viewModels: [any OnboardingModelProtocol]) {
         self.viewModels = viewModels
     }
     
     func start() {
-        shouldBePresented = itemsToShow > 0
-    }
-}
-
-private extension OnboardingCoordinator {
-    var itemsToShow: Int {
-        self.viewModels
-            .filter { $0.needToBePresented && !$0.done }
-            .count
-    }
-
-    var itemsToBePresented: Int {
-        self.viewModels
-            .filter { $0.needToBePresented }
-            .count
-    }
-}
-
-extension OnboardingCoordinator {
-    var modelToPresent: (any OnboardingModelProtocol)? {
-        if var model = self.viewModels.first(where: { $0.needToBePresented && !$0.done }) {
-            model.coordinator = self
-            return model
-        }
-        return nil
+        self.modal = OnboardingContainerView(coordinator: self)
+        
+        isPresented = itemsToShow > 0
     }
     
     @ViewBuilder
@@ -83,15 +45,52 @@ extension OnboardingCoordinator {
             forceExit()
             return
         }
-
+        
         viewModels[index].done = true
-
+        
         if itemsToShow == 0 {
             forceExit()
         }
     }
     
     func forceExit() {
-        shouldBePresented = false
+        isPresented = false
+        
+        self.viewModels.removeAll()
     }
+}
+
+extension OnboardingCoordinator {
+    var nextButtonTitle: String {
+        if itemsToShow > 1 {
+            "Next Page \(itemsToBePresented - (itemsToShow - 1))/\(itemsToBePresented)"
+        } else {
+            "Exit"
+        }
+    }
+}
+
+private extension OnboardingCoordinator {
+    
+    var itemsToShow: Int {
+        self.viewModels
+            .filter { $0.needToBePresented && !$0.done }
+            .count
+    }
+
+    var itemsToBePresented: Int {
+        self.viewModels
+            .filter { $0.needToBePresented }
+            .count
+    }
+    
+    var modelToPresent: (any OnboardingModelProtocol)? {
+        if var model = self.viewModels.first(where: { $0.needToBePresented && !$0.done }) {
+            model.coordinator = self
+            return model
+        }
+        return nil
+    }
+    
+    
 }

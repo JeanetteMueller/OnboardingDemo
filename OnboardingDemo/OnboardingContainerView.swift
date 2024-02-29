@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OnboardingContainerView: View {
-    var coordinator: OnboardingCoordinator
+    @StateObject var coordinator: OnboardingCoordinator
 
     var body: some View {
         VStack(spacing: 0) {

@@ -9,7 +9,6 @@ import SwiftUI
 
 // MARK: Dummy Onboarding Model Nr. 1
 
-@Observable
 class OnboardingModel_1: OnboardingModelProtocol {
     let id: UUID = UUID()
 

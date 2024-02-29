@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    let onboardingCoordinator = OnboardingCoordinator()
+    @StateObject var onboardingCoordinator = OnboardingCoordinator()
     
     var body: some View {
         VStack {
