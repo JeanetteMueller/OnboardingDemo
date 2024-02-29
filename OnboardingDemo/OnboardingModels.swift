@@ -11,6 +11,8 @@ import SwiftUI
 
 @Observable
 class OnboardingModel_1: OnboardingModelProtocol {
+    let id: UUID = UUID()
+
     var coordinator: OnboardingCoordinator?
 
     var view: AnyView {
@@ -72,6 +74,8 @@ struct OnboardingView_1: View {
 // MARK: Dummy Onboarding Model Nr. 2
 
 struct OnboardingModel_2: OnboardingModelProtocol {
+    let id: UUID = UUID()
+
     var coordinator: OnboardingCoordinator?
     var view: AnyView {
         return AnyView(OnboardingView_2())
@@ -95,6 +99,8 @@ struct OnboardingView_2: View {
 // MARK: Dummy Onboarding Model Nr. 3
 
 struct OnboardingModel_3: OnboardingModelProtocol {
+    let id: UUID = UUID()
+
     var coordinator: OnboardingCoordinator?
     var view: AnyView {
         return AnyView(OnboardingView_3())
@@ -118,6 +124,8 @@ struct OnboardingView_3: View {
 // MARK: Dummy Onboarding Model Nr. 4
 
 struct OnboardingModel_4: OnboardingModelProtocol {
+    let id: UUID = UUID()
+    
     var coordinator: OnboardingCoordinator?
     var view: AnyView {
         return AnyView(OnboardingView_4())

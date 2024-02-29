@@ -9,7 +9,9 @@ import SwiftUI
 
 // MARK: - OnboardingModel
 
-protocol OnboardingModelProtocol {
+protocol OnboardingModelProtocol: Identifiable {
+    var id: UUID { get }
+
     var coordinator: OnboardingCoordinator? { get set }
     var view: AnyView { get }
     var needToBePresented: Bool { get }
@@ -24,6 +26,7 @@ final class OnboardingCoordinator {
     var modal: OnboardingContainerView {
         OnboardingContainerView(coordinator: self)
     }
+
     var presenting: Binding<Bool> {
         Binding<Bool> {
             return self.shouldBePresented
@@ -31,8 +34,15 @@ final class OnboardingCoordinator {
             print("binding set to \(newValue)")
         }
     }
-    var nextButtonTitle: String = "#"
-    
+
+    var nextButtonTitle: String {
+        if itemsToShow > 1 {
+            "Next Page \(itemsToBePresented - (itemsToShow - 1))/\(itemsToBePresented)"
+        } else {
+            "Exit"
+        }
+    }
+
     private var shouldBePresented: Bool = false
     
     func setup(_ viewModels: [any OnboardingModelProtocol]) {
@@ -40,79 +50,52 @@ final class OnboardingCoordinator {
     }
     
     func start() {
-        updateNextButtonTitle()
         shouldBePresented = itemsToShow > 0
     }
 }
 
 private extension OnboardingCoordinator {
-    private var itemsToShow: Int {
+    var itemsToShow: Int {
         self.viewModels
             .filter { $0.needToBePresented && !$0.done }
             .count
     }
-    private var itemsToBePresented: Int {
+
+    var itemsToBePresented: Int {
         self.viewModels
             .filter { $0.needToBePresented }
             .count
     }
-    
-    func updateNextButtonTitle() {
-        if itemsToShow > 1 {
-            self.nextButtonTitle = "Next Page \(itemsToBePresented - (itemsToShow - 1))/\(itemsToBePresented)"
-        }else {
-            self.nextButtonTitle = "Exit"
-        }
-    }
 }
 
 extension OnboardingCoordinator {
-    func getFirstModel() -> (any OnboardingModelProtocol)? {
-        if var firstModel = self.viewModels.first(where: { $0.needToBePresented && !$0.done }) {
-            firstModel.coordinator = self
-            return firstModel
+    var modelToPresent: (any OnboardingModelProtocol)? {
+        if var model = self.viewModels.first(where: { $0.needToBePresented && !$0.done }) {
+            model.coordinator = self
+            return model
         }
         return nil
     }
     
-    func onboardingStepView() -> AnyView? {
-        if let firstModel = getFirstModel() {
-            return firstModel.view
-        }
-        return nil
+    @ViewBuilder
+    func onboardingStepView() -> some View {
+        modelToPresent?.view
     }
     
     func next() {
-        print("next")
-        
-        var done = false
-        var newModels = [any OnboardingModelProtocol]()
-        for var type in self.viewModels {
-            if !done && type.needToBePresented && !type.done {
-                type.done = true
-                newModels.append(type)
-                done = true
-            }else{
-                newModels.append(type)
-            }
+        guard let modelToPresent, let index = viewModels.firstIndex(where: { $0.id == modelToPresent.id }) else {
+            forceExit()
+            return
         }
-        
-        self.viewModels = newModels
-        
-        updateNextButtonTitle()
-        
-        if let firstModel = getFirstModel() {
-            print("preset next view \(firstModel)")
-        }else{
-            shouldBePresented = false
-            
-            self.viewModels.removeAll()
+
+        viewModels[index].done = true
+
+        if itemsToShow == 0 {
+            forceExit()
         }
     }
     
     func forceExit() {
         shouldBePresented = false
-        
-        self.viewModels.removeAll()
     }
 }
