@@ -23,8 +23,10 @@ final class OnboardingCoordinator: ObservableObject {
     @Published var viewModels = [any OnboardingModelProtocol]()
     @Published var modal: OnboardingContainerView?
     @Published var isPresented = false
-    
     @Published var currentModelIndex = 0
+}
+
+extension OnboardingCoordinator {
     
     @ViewBuilder
     func onboardingStepView() -> some View {
@@ -71,19 +73,21 @@ extension OnboardingCoordinator {
             "Exit"
         }
     }
+    
     var nextButtonIsEnabled: Bool {
         true
-    }
-    
-    var pageInfo: String {
-        "\(currentModelIndex + 1)/\(itemsToShow)"
     }
     
     var previousButtonTitle: String {
         "Back"
     }
+    
     var previousButtonIsEnabled: Bool {
         currentModelIndex > 0
+    }
+    
+    var pageInfo: String {
+        "\(currentModelIndex + 1)/\(itemsToShow)"
     }
 }
 
